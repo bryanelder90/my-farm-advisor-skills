@@ -242,6 +242,10 @@ The umbrella entrypoint is [`SKILL.md`](SKILL.md). From there, the skill routes 
 | Strategy         | Crop strategy and maturity planning workflows                          | [`strategy/INDEX.md`](strategy/INDEX.md)                 |
 | Weather          | NASA POWER weather ingestion and downstream weather analysis           | [`weather/INDEX.md`](weather/INDEX.md)                   |
 
+### Field-Level EDA
+
+The [`eda-field-level`](eda/eda-field-level/) subskill compares field boundary geometry, CDL crop rotation, and NASA POWER weather across three growers along an Illinois-to-Nebraska transect. It generates 10 static plots (area histograms, compactness boxplots, transition heatmaps, precipitation/GDD boxes, monthly climatology, and a 4-panel field location map) plus a self-contained HTML report. Outputs are saved to the runtime EDA output directory under the data-pipeline root. See [`eda/eda-field-level/GUIDE.md`](eda/eda-field-level/GUIDE.md) for the full workflow.
+
 ## Typical Workflow
 
 ```mermaid

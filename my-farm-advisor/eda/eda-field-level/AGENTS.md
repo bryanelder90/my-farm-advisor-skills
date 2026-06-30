@@ -1,0 +1,27 @@
+# Local Instructions
+
+## Purpose
+
+This folder owns field-level EDA workflows for comparing field-boundary geometry, CDL crop rotations, and weather across growers along the Corn Belt transect.
+
+## Safe edit scope
+
+Edits should stay in this folder and its children unless the user explicitly asks for a broader skill change. Do not change parent `SKILL.md`, sibling EDA workflows, or root policy from a subskill task unless explicitly requested.
+
+## Read nearby docs first
+
+Read `GUIDE.md` first. If routing context is needed, read `../INDEX.md` and `../../SKILL.md`.
+
+## Local validation
+
+Run `./scripts/validate.sh` from the repository root after structural changes. Run the companion script from the runtime copy to verify output:
+
+```bash
+export DATA_PIPELINE_DATA_ROOT=/home/coder/my-farm-advisor-runtime
+"${DATA_PIPELINE_DATA_ROOT}/data-pipeline/.venv/bin/python" \
+  "${DATA_PIPELINE_DATA_ROOT}/data-pipeline/src/scripts/eda/eda_field_level.py"
+```
+
+## Local-delta-only reminder
+
+This nested AGENTS.md only records instructions that differ from the parent or root files. Do not duplicate root-wide asset, vendor, or validation policy here except this pointer to `../../../AGENTS.md`.
