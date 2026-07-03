@@ -26,7 +26,6 @@ sys.path.insert(0, str(_SCRIPTS_DIR / "lib"))
 from paths import (  # pyright: ignore[reportMissingImports]
     DATA_ROOT,
     farm_cdl_full_composition_path,
-    farm_weather_path,
     field_boundary_path,
     field_dir,
     field_weather_path,
@@ -155,9 +154,8 @@ def _ndvi_time_series(grower: str, farm: str, field: str, year: int, boundary: g
 
 
 def _weather_data(grower: str, farm: str, field: str, year: int) -> pd.DataFrame:
-    wpath = farm_weather_path(grower, farm)
+    wpath = field_weather_path(grower, farm, field)
     df = pd.read_csv(wpath, parse_dates=["date"])
-    df = df[df["field_id"] == field].copy()
     df = df[(df["date"] >= f"{year}-01-01") & (df["date"] <= f"{year}-12-31")].copy()
     if df.empty:
         return df
@@ -182,9 +180,8 @@ def _crop_for_year(grower: str, farm: str, field: str, year: int) -> str | None:
 # ── Drought context (all available years) ──────────────────
 
 def _load_all_years_weather(grower: str, farm: str, field: str) -> pd.DataFrame:
-    wpath = farm_weather_path(grower, farm)
+    wpath = field_weather_path(grower, farm, field)
     df = pd.read_csv(wpath, parse_dates=["date"])
-    df = df[df["field_id"] == field].copy()
     return df
 
 
