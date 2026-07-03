@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from datetime import date, datetime
 from pathlib import Path
@@ -28,6 +29,7 @@ from paths import (  # pyright: ignore[reportMissingImports]
     farm_weather_path,
     field_boundary_path,
     field_dir,
+    field_weather_path,
 )
 
 # ── Colour palette ──────────────────────────────────────────
@@ -177,6 +179,57 @@ def _crop_for_year(grower: str, farm: str, field: str, year: int) -> str | None:
     return top["crop_name"]
 
 
+# ── Drought context (all available years) ──────────────────
+
+def _load_all_years_weather(grower: str, farm: str, field: str) -> pd.DataFrame:
+    wpath = farm_weather_path(grower, farm)
+    df = pd.read_csv(wpath, parse_dates=["date"])
+    df = df[df["field_id"] == field].copy()
+    return df
+
+
+def _drought_context(all_weather: pd.DataFrame, year: int) -> dict:
+    if all_weather.empty or len(all_weather) < 365:
+        return {}
+    all_weather = all_weather.copy()
+    all_weather["y"] = all_weather["date"].dt.year
+    yearly = all_weather.groupby("y")["PRECTOTCORR"].sum()
+    this_year = yearly.get(year, None)
+    mean_all = yearly.mean()
+    if this_year is None or mean_all == 0:
+        return {}
+    anomaly_mm = this_year - mean_all
+    anomaly_pct = anomaly_mm / mean_all * 100
+    return {
+        "year_total_mm": round(this_year, 1),
+        "five_year_mean_mm": round(mean_all, 1),
+        "anomaly_mm": round(anomaly_mm, 1),
+        "anomaly_pct": round(anomaly_pct, 1),
+    }
+
+
+def _drought_label(drought: dict, crop: str) -> str:
+    if not drought:
+        return ""
+    pct = drought["anomaly_pct"]
+    if pct > 20:
+        label = "Much wetter than normal"
+    elif pct > 5:
+        label = "Wetter than normal"
+    elif pct > -5:
+        label = "Near-normal precipitation"
+    elif pct > -20:
+        label = "Drier than normal"
+    else:
+        label = "Much drier than normal"
+    return (
+        f"Drought context: {drought['year_total_mm']:.0f} mm total "
+        f"({drought['five_year_mean_mm']:.0f} mm 5-yr mean, "
+        f"{drought['anomaly_pct']:+.0f}%)\n"
+        f"{label} — {crop}"
+    )
+
+
 # ── Event detection ─────────────────────────────────────────
 
 def _data_quality_report(ndvi_df: pd.DataFrame, weather_df: pd.DataFrame, year: int) -> list[str]:
@@ -290,6 +343,52 @@ def _dry_spell_wording(days: int, crop: str) -> str:
     return f"{days}-day dry spell"
 
 
+# ── Machine-readable event JSON ────────────────────────────
+
+def _save_events_json(
+    events: dict,
+    ndvi_df: pd.DataFrame,
+    weather_df: pd.DataFrame,
+    drought: dict,
+    output_dir: Path,
+    field: str,
+    year: int,
+    crop_name: str,
+) -> str:
+    ndvi_peak = None
+    ndvi_peak_date = None
+    if not ndvi_df.empty:
+        peak_row = ndvi_df.loc[ndvi_df["mean_ndvi"].idxmax()]
+        ndvi_peak = round(float(peak_row["mean_ndvi"]), 3)
+        ndvi_peak_date = str(peak_row["date"].date())
+
+    temp_min = weather_df["T2M_MIN"].min() if not weather_df.empty else None
+    temp_max = weather_df["T2M_MAX"].max() if not weather_df.empty else None
+    total_precip = round(float(weather_df["PRECTOTCORR"].sum()), 1) if not weather_df.empty else None
+    total_gdd = round(float(weather_df["cum_gdd"].iloc[-1]), 1) if not weather_df.empty else None
+
+    summary = {
+        "field": field,
+        "year": year,
+        "crop": crop_name,
+        "ndvi_peak": ndvi_peak,
+        "ndvi_peak_date": ndvi_peak_date,
+        "total_precip_mm": total_precip,
+        "total_gdd_cday": total_gdd,
+        "temp_min_c": round(float(temp_min), 1) if temp_min is not None else None,
+        "temp_max_c": round(float(temp_max), 1) if temp_max is not None else None,
+        "ndvi_event_count": len(events["ndvi"]),
+        "weather_event_count": len(events["weather"]),
+        "events": events,
+        "drought_context": drought,
+    }
+
+    out_path = output_dir / f"{field}_{year}_events.json"
+    with open(out_path, "w") as f:
+        json.dump(summary, f, indent=2, default=str)
+    return str(out_path)
+
+
 # ── Dashboard builder ───────────────────────────────────────
 
 def _build_dashboard(args: argparse.Namespace) -> str:
@@ -302,6 +401,10 @@ def _build_dashboard(args: argparse.Namespace) -> str:
     ndvi_df = _ndvi_time_series(grower, farm, field, year, boundary)
     weather_df = _weather_data(grower, farm, field, year)
     crop_name = _crop_for_year(grower, farm, field, year) or "Unknown"
+
+    # Drought context (all available years)
+    all_weather = _load_all_years_weather(grower, farm, field)
+    drought = _drought_context(all_weather, year)
 
     # Data quality
     issues = _data_quality_report(ndvi_df, weather_df, year)
@@ -408,10 +511,12 @@ def _build_dashboard(args: argparse.Namespace) -> str:
                     arrowprops=dict(arrowstyle="->", color=C_TEMP_HOT, lw=0.8),
                 )
 
-    ax_ndvi.set_ylabel("NDVI")
+    ax_ndvi.set_ylabel("NDVI (unitless)")
     ax_ndvi.set_ylim(-0.05, 1.0)
     ax_ndvi.legend(loc="upper left", fontsize=8)
     ax_ndvi.tick_params(labelbottom=False)
+    ax_ndvi.minorticks_on()
+    ax_ndvi.grid(which="minor", alpha=0.1)
 
     # ── Panel (B) Precipitation ─────────────────────────────
     ax_precip = fig.add_subplot(gs[2])
@@ -429,6 +534,16 @@ def _build_dashboard(args: argparse.Namespace) -> str:
                        transform=ax_precip.transAxes, fontsize=8, color=C_PRECIP, fontweight="bold",
                        ha="right", va="top",
                        bbox=dict(boxstyle="round,pad=0.3", facecolor="white", edgecolor=C_PRECIP, alpha=0.8))
+
+        # Drought context callout
+        dlab = _drought_label(drought, crop_name)
+        if dlab:
+            ax_precip.text(
+                0.02, 0.02, dlab,
+                transform=ax_precip.transAxes, fontsize=6.5, color=C_ANNOT,
+                ha="left", va="bottom", fontfamily="monospace",
+                bbox=dict(boxstyle="round,pad=0.4", facecolor="#F5F0E0", edgecolor=C_DRY, alpha=0.85),
+            )
 
         # Dry spell bands
         for ev in events["weather"]:
@@ -453,9 +568,11 @@ def _build_dashboard(args: argparse.Namespace) -> str:
                 arrowprops=dict(arrowstyle="->", color=C_PRECIP, lw=0.6),
             )
 
-    ax_precip.set_ylabel("Precip (mm)")
+    ax_precip.set_ylabel("Precip (mm/day)")
     ax_precip.legend(loc="upper left", fontsize=8)
     ax_precip.tick_params(labelbottom=False)
+    ax_precip.minorticks_on()
+    ax_precip.grid(which="minor", alpha=0.1)
 
     # ── Panel (C) Temperature ──────────────────────────────
     ax_temp = fig.add_subplot(gs[3])
@@ -499,6 +616,8 @@ def _build_dashboard(args: argparse.Namespace) -> str:
     ax_temp.set_ylabel("Temp (°C)")
     ax_temp.legend(loc="upper left", fontsize=8, ncol=3)
     ax_temp.tick_params(labelbottom=False)
+    ax_temp.minorticks_on()
+    ax_temp.grid(which="minor", alpha=0.1)
 
     # ── Panel (D) Cumulative GDD ───────────────────────────
     ax_gdd = fig.add_subplot(gs[4])
@@ -520,6 +639,8 @@ def _build_dashboard(args: argparse.Namespace) -> str:
     ax_gdd.set_ylabel("GDD (°C·day)")
     ax_gdd.set_xlabel(f"Date ({year})")
     ax_gdd.legend(loc="upper left", fontsize=8)
+    ax_gdd.minorticks_on()
+    ax_gdd.grid(which="minor", alpha=0.1)
 
     # ── Shared x-axis ──────────────────────────────────────
     for ax in [ax_ndvi, ax_precip, ax_temp, ax_gdd]:
@@ -568,10 +689,17 @@ def _build_dashboard(args: argparse.Namespace) -> str:
     out_path = output_dir / f"{field}_{year}_dashboard.png"
     fig.savefig(out_path, dpi=300, bbox_inches="tight")
     plt.close(fig)
+
+    _save_events_json(events, ndvi_df, weather_df, drought, output_dir, field, year, crop_name)
     return str(out_path)
 
 
 if __name__ == "__main__":
     args = _parse_args()
     path = _build_dashboard(args)
+    field = args.field_slug
+    year = args.year
+    output_dir = Path(args.output_dir) if args.output_dir else DATA_ROOT / "eda" / "field-season-dashboard" / "output"
+    events_path = output_dir / f"{field}_{year}_events.json"
     print(f"Dashboard saved: {path}")
+    print(f"Events JSON:   {events_path}")
