@@ -244,6 +244,10 @@ The umbrella entrypoint is [`SKILL.md`](SKILL.md). From there, the skill routes 
 | Strategy         | Crop strategy and maturity planning workflows                          | [`strategy/INDEX.md`](strategy/INDEX.md)                 |
 | Weather          | NASA POWER weather ingestion and downstream weather analysis           | [`weather/INDEX.md`](weather/INDEX.md)                   |
 
+### Field-Season Dashboard
+
+The [`eda-field-season-dashboard`](eda/eda-field-season-dashboard/) subskill generates a single aligned 5-panel dashboard (NDVI, precipitation, temperature/extremes, cumulative GDD, plus crop-stage bar) for one field in one growing season. The prototype uses Nebraska field `osm-1352429400` (Buffalo County), year **2021, Corn**. All 5 years (2021–2025) are generated to show the contrast across corn, soybean, and winter wheat rotations. See [`eda/eda-field-season-dashboard/GUIDE.md`](eda/eda-field-season-dashboard/GUIDE.md) for the full workflow.
+
 ## Typical Workflow
 
 ```mermaid
