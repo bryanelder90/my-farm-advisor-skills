@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Assignment 2 — Field-Level EDA Report</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: #f5f5f0;
+    color: #1a1a1a;
+    padding: 2rem 1rem;
+  }
+  .container { max-width: 1200px; margin: 0 auto; }
+
+  header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 3px solid #27AE60;
+  }
+  header h1 { font-size: 1.8rem; font-weight: 700; color: #1b4332; }
+  header p  { font-size: 0.95rem; color: #555; margin-top: 0.4rem; }
+
+  .section {
+    margin-bottom: 2.5rem;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+    padding: 1.5rem 2rem;
+  }
+  .section h2 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #27AE60;
+    border-bottom: 2px solid #27AE60;
+    padding-bottom: 0.3rem;
+    margin-bottom: 1rem;
+  }
+  .section h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 1rem 0 0.5rem;
+  }
+  .section p, .section li {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #333;
+  }
+  .section ul { padding-left: 1.5rem; margin: 0.5rem 0; }
+  .section li { margin-bottom: 0.3rem; }
+
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center;
+    margin: 1rem 0;
+  }
+  .card {
+    flex: 1 1 300px;
+    min-width: 260px;
+    max-width: 520px;
+    background: #fafafa;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    overflow: hidden;
+    border: 1px solid #eaeaea;
+  }
+  .card a { display: block; line-height: 0; }
+  .card img { width: 100%; height: auto; display: block; }
+  .card .label {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: #333;
+    background: #fff;
+    border-top: 1px solid #eee;
+  }
+  .card .label small {
+    display: block;
+    font-weight: 400;
+    color: #777;
+    font-size: 0.76rem;
+    margin-top: 0.15rem;
+  }
+
+  .viz-interp {
+    background: #f0f9f0;
+    border-left: 3px solid #27AE60;
+    padding: 0.6rem 1rem;
+    margin: 0.6rem 0;
+    font-size: 0.88rem;
+    border-radius: 0 4px 4px 0;
+  }
+  .viz-interp strong { color: #1b4332; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.8rem 0;
+    font-size: 0.88rem;
+  }
+  th, td {
+    border: 1px solid #ddd;
+    padding: 0.5rem 0.7rem;
+    text-align: left;
+  }
+  th { background: #27AE60; color: #fff; font-weight: 600; }
+  tr:nth-child(even) { background: #f9f9f9; }
+
+  .badge {
+    display: inline-block;
+    padding: 0.15rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #fff;
+  }
+  .badge-il { background: #27AE60; }
+  .badge-ia { background: #F39C12; }
+  .badge-ne { background: #2980B9; }
+
+  .limitation-box {
+    background: #fff8e1;
+    border-left: 3px solid #F39C12;
+    padding: 0.6rem 1rem;
+    margin: 0.6rem 0;
+    font-size: 0.88rem;
+    border-radius: 0 4px 4px 0;
+  }
+
+  footer {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #999;
+    margin-top: 2rem;
+    border-top: 1px solid #ddd;
+    padding-top: 1.5rem;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <h1>Assignment 2 — Field-Level Exploratory Data Analysis</h1>
+  <p>Corn Belt transect: Illinois (Iroquois County) · Iowa (Kossuth County) · Nebraska (Buffalo County)</p>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- Section 1: Dataset Scope -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2>1. Dataset Scope and Grower Locations</h2>
+
+  <h3>Grower Summary</h3>
+  <table>
+    <tr>
+      <th>Grower</th>
+      <th>County</th>
+      <th>State</th>
+      <th>State FIPS</th>
+      <th>Fields</th>
+      <th>Centroid (lat, lon)</th>
+    </tr>
+    <tr>
+      <td><span class="badge badge-il">IL</span> Illinois</td>
+      <td>Iroquois County</td>
+      <td>Illinois</td>
+      <td>17</td>
+      <td>10</td>
+      <td>40.90&deg;N, 87.86&deg;W</td>
+    </tr>
+    <tr>
+      <td><span class="badge badge-ia">IA</span> Iowa</td>
+      <td>Kossuth County</td>
+      <td>Iowa</td>
+      <td>19</td>
+      <td>10</td>
+      <td>43.30&deg;N, 94.21&deg;W</td>
+    </tr>
+    <tr>
+      <td><span class="badge badge-ne">NE</span> Nebraska</td>
+      <td>Buffalo County</td>
+      <td>Nebraska</td>
+      <td>31</td>
+      <td>10</td>
+      <td>40.74&deg;N, 99.18&deg;W</td>
+    </tr>
+  </table>
+
+  <h3>Data Layers Used</h3>
+  <table>
+    <tr><th>Layer</th><th>Source</th><th>Coverage</th><th>Fields per Grower</th></tr>
+    <tr>
+      <td>Field boundaries</td>
+      <td>OpenStreetMap (Overpass API)</td>
+      <td>2025</td>
+      <td>10 / 10 / 10</td>
+    </tr>
+    <tr>
+      <td>CDL crop rotation</td>
+      <td>USDA NASS Cropland Data Layer</td>
+      <td>2021&ndash;2025</td>
+      <td>10 / 10 / 10</td>
+    </tr>
+    <tr>
+      <td>Daily weather</td>
+      <td>NASA POWER</td>
+      <td>2021&ndash;2025</td>
+      <td>3 / 3 / 10 *</td>
+    </tr>
+  </table>
+  <div class="limitation-box">
+    <strong>*</strong> Weather data for Nebraska has all 10 fields. Illinois and Iowa have 3 fields each with weather data (the 7 expanded fields' weather download is pending).
+  </div>
+
+  <h3>Comparison Levels</h3>
+  <ul>
+    <li><strong>Within-field (time):</strong> 5-year weather time series per field (growing season totals by year)</li>
+    <li><strong>Across-fields within grower:</strong> Field area, shape, rotation diversity, corn/soy distribution within each grower</li>
+    <li><strong>Across-grower:</strong> All visualizations compare Illinois vs Iowa vs Nebraska to show the Corn Belt transect gradient</li>
+  </ul>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- Section 2: Field Boundary Geometry -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2>2. Field Boundary Geometry</h2>
+
+  <p><strong>Analysis method:</strong> Field boundaries loaded as GeoJSON via GeoPandas, projected to EPSG:5070 (Conus Albers Equal Area) for accurate area and perimeter computation. Compactness computed as the isoperimetric quotient <em>4&pi;A / P&sup2;</em>, where 1.0 = perfect circle, ~0.79 = square, lower values = more irregular.</p>
+
+  <div class="row">
+    <div class="card">
+      <a href="geometry/field_area_histogram.png" target="_blank"><img src="geometry/field_area_histogram.png" alt="Field area histogram"></a>
+      <div class="label">Field Area Distribution (2 statistical viz)</div>
+    </div>
+    <div class="card">
+      <a href="geometry/shape_compactness_boxplot.png" target="_blank"><img src="geometry/shape_compactness_boxplot.png" alt="Shape compactness boxplot"></a>
+      <div class="label">Shape Compactness Comparison (comparison analysis)</div>
+    </div>
+    <div class="card">
+      <a href="geometry/area_vs_perimeter_scatter.png" target="_blank"><img src="geometry/area_vs_perimeter_scatter.png" alt="Area vs perimeter scatter"></a>
+      <div class="label">Area vs Perimeter (correlation analysis)</div>
+    </div>
+  </div>
+
+  <div class="viz-interp">
+    <strong>Area histogram (statistical):</strong> Illinois fields are smaller (mean 104 ac, range 3&ndash;305 ac) and more variable. Iowa fields are the largest (mean 184 ac, up to 634 ac). Nebraska has the smallest average size (81 ac) but includes both tiny (16 ac) and large (232 ac) fields.
+  </div>
+  <div class="viz-interp">
+    <strong>Compactness boxplot (comparison):</strong> Illinois has the most irregular shapes (median 0.52, with values as low as 0.06). Iowa fields are the most regular/square (median 0.63). Nebraska shows a wide spread — some near-perfect circles (compactness up to 1.0, center-pivot irrigation) alongside irregular fields. Reference lines at 0.79 (square) and 0.60 (irregular threshold) aid interpretation.
+  </div>
+  <div class="viz-interp">
+    <strong>Area vs perimeter scatter (correlation):</strong> Three distinct clusters emerge — Illinois fields scatter below the square line (irregular), Iowa fields cluster near the square line, and Nebraska fields straddle between square and circle lines. The theoretical circle and square curves show the geometric bounds.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- Section 3: Geospatial Map -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2>3. Geospatial Field Location Map</h2>
+
+  <div class="row">
+    <div class="card" style="max-width: 800px;">
+      <a href="geometry/field_location_map.png" target="_blank"><img src="geometry/field_location_map.png" alt="Field location map"></a>
+      <div class="label">Field Location Map (geospatial map)</div>
+    </div>
+  </div>
+
+  <div class="viz-interp">
+    <strong>What it shows:</strong> The top row has one tight panel per county, zoomed to show individual field boundaries clearly with a CartoDB Positron basemap (roads, waterways, towns). The bottom panel shows the regional context with all three states and field clusters labeled. The east-to-west transect across 12&deg; of longitude is visually evident — Illinois in the humid east, Iowa in the central corridor, Nebraska in the rain-shadow west. This geographic gradient underpins the precipitation and rotation diversity differences quantified in the statistical plots.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- Section 4: CDL Crop Rotation -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2>4. CDL Crop Rotation</h2>
+
+  <p><strong>Analysis method:</strong> Crop rotation data loaded from farm-level <code>*_crop_rotation.csv</code> tables generated by the CDL pipeline. Each field has a 5-year rotation sequence (2021&ndash;2025) with diversity score, corn/soybean year counts, and transition patterns parsed from the <code>rotation_patterns</code> column.</p>
+
+  <div class="row">
+    <div class="card">
+      <a href="rotation/rotation_diversity_bar.png" target="_blank"><img src="rotation/rotation_diversity_bar.png" alt="Rotation diversity bar"></a>
+      <div class="label">Rotation Diversity (2 statistical viz)</div>
+    </div>
+    <div class="card">
+      <a href="rotation/corn_soy_stacked_bar.png" target="_blank"><img src="rotation/corn_soy_stacked_bar.png" alt="Corn vs soy stacked bar"></a>
+      <div class="label">Corn vs Soybean Years (comparison analysis)</div>
+    </div>
+    <div class="card">
+      <a href="rotation/rotation_transition_heatmap.png" target="_blank"><img src="rotation/rotation_transition_heatmap.png" alt="Rotation transition heatmap"></a>
+      <div class="label">Rotation Transition Matrix (correlation analysis)</div>
+    </div>
+  </div>
+
+  <div class="viz-interp">
+    <strong>Rotation diversity bar (statistical):</strong> Illinois has 1 continuous-corn field and 9 corn-soy rotations (diversity 1 and 2). Iowa has 2 continuous-corn fields and 8 corn-soy. Nebraska stands out with 3 fields at diversity 3 (including winter wheat and other crops in the rotation), 6 at diversity 2, and 1 continuous. The bar shows NE has the most diverse cropping systems.
+  </div>
+  <div class="viz-interp">
+    <strong>Corn vs soybean stacked bar (comparison):</strong> Each horizontal bar is one field, grouped by grower with separator lines. Illinois and Iowa fields range from 2 to 5 corn years (complementary soybean years filling the 5-year window). Nebraska has a purple "Other" segment on some fields, representing non-corn/soy crops (winter wheat, forest). This visual makes it easy to spot continuous-corn fields (5 corn, 0 soy) vs balanced rotations (3 corn, 2 soy).
+  </div>
+  <div class="viz-interp">
+    <strong>Transition matrix heatmap (correlation):</strong> Row-normalized heatmaps show crop-to-crop transition probabilities. Illinois and Iowa show tight Corn&harr;Soybeans loops — nearly all transitions are between these two crops. Nebraska's matrix is more distributed, with additional transitions involving Winter Wheat and Forest, confirming the greater rotation diversity seen in the bar chart.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- Section 5: Weather -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2>5. Weather</h2>
+
+  <p><strong>Analysis method:</strong> Daily weather data from NASA POWER (2021&ndash;2025) loaded from per-field <code>weather/daily_weather.csv</code> files. Growing season defined as April&ndash;September. GDD computed as <em>((T<sub>max</sub> + T<sub>min</sub>) / 2) &minus; 10</em>, clipped at zero.</p>
+
+  <div class="row">
+    <div class="card">
+      <a href="weather/growing_season_precip.png" target="_blank"><img src="weather/growing_season_precip.png" alt="Growing season precipitation"></a>
+      <div class="label">Growing Season Precipitation (2 statistical viz)</div>
+    </div>
+    <div class="card">
+      <a href="weather/growing_season_gdd.png" target="_blank"><img src="weather/growing_season_gdd.png" alt="Growing season GDD"></a>
+      <div class="label">Growing Season GDD (2 statistical viz)</div>
+    </div>
+    <div class="card">
+      <a href="weather/monthly_precip_climatology.png" target="_blank"><img src="weather/monthly_precip_climatology.png" alt="Monthly precipitation climatology"></a>
+      <div class="label">Monthly Precip Climatology (comparison analysis)</div>
+    </div>
+  </div>
+
+  <div class="viz-interp">
+    <strong>Growing season precipitation (statistical):</strong> Clear west-to-east gradient — Nebraska fields receive 300&ndash;450 mm, Iowa 400&ndash;550 mm, Illinois 450&ndash;630 mm. Year-to-year variability is visible within each grower. Nebraska has the lowest and most consistent precipitation across years.
+  </div>
+  <div class="viz-interp">
+    <strong>Growing season GDD (statistical):</strong> GDD follows the same gradient: Nebraska 1,900&ndash;2,100 &deg;C-days, Iowa 1,600&ndash;1,850, Illinois 1,750&ndash;1,900. Note that Nebraska's higher GDD than Illinois is partially latitude-driven (Buffalo County is at 40.7&deg;N vs Iowa's Kossuth County at 43.3&deg;N).
+  </div>
+  <div class="viz-interp">
+    <strong>Monthly precipitation climatology (comparison):</strong> Five-year mean monthly precipitation with &plusmn;1&sigma; envelope. Illinois has steady precipitation from March through September. Iowa shows a pronounced peak in May&ndash;June. Nebraska has the lowest values across all months and a sharper spring peak followed by a drier mid-summer. The shaded envelopes show Nebraska's higher interannual variability relative to its mean.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- Section 6: Limitations and Assumptions -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2>6. Limitations, Missing Data, and Assumptions</h2>
+
+  <h3>Data Limitations</h3>
+  <ul>
+    <li><strong>Weather coverage:</strong> Per-field daily weather data is complete for all 10 Nebraska fields, but only the original 3 fields have weather data in Illinois and Iowa. The 7 expanded fields per grower were added after initial weather download. Weather visualizations for IL and IA are based on fewer data points, though the climate signal is representative of those counties.</li>
+    <li><strong>CDL coverage:</strong> Complete for all 30 fields across all three growers (2021&ndash;2025).</li>
+    <li><strong>Field boundary coverage:</strong> Complete for all 30 fields from OpenStreetMap.</li>
+  </ul>
+
+  <h3>Assumptions</h3>
+  <ul>
+    <li><strong>Growing season:</strong> Defined as April&ndash;September for all growers. This is appropriate for corn and soybeans across the Corn Belt but may not capture the full season for winter wheat in Nebraska.</li>
+    <li><strong>GDD base temperature:</strong> 10&deg;C is used as the base for all growers, standard for corn.</li>
+    <li><strong>CDL rotation quality:</strong> Rotation sequences derive from the dominant crop per year per field. Fields with multiple crops in a single year are represented by the most common crop class.</li>
+    <li><strong>Weather spatial resolution:</strong> NASA POWER provides grid-cell averages at 0.5&deg; &times; 0.625&deg; resolution. Fields within the same grid cell share identical weather values.</li>
+  </ul>
+
+  <h3>Excluded Analyses</h3>
+  <ul>
+    <li><strong>Soil analysis:</strong> Not required and intentionally excluded. SSURGO soil data is available in the pipeline for each field but was outside the assignment scope.</li>
+    <li><strong>Satellite / NDVI:</strong> Not included. NDVI downloads were incomplete for the expanded fields and yield proxy analysis was deprioritized.</li>
+    <li><strong>Yield data:</strong> No yield data exists in the pipeline; yield-based analyses were dropped.</li>
+    <li><strong>Interactive dashboards:</strong> All outputs are static PNGs. No interactive components were built, per assignment requirements.</li>
+  </ul>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- Section 7: Soil Confirmation -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2>7. Soil Analysis Confirmation</h2>
+
+  <p>Soil analysis was <strong>not required</strong> for this assignment and was <strong>not included</strong> in any of the EDA visualizations or analysis workflows. All findings focus exclusively on field boundary geometry, CDL crop rotation patterns, and weather data.</p>
+  <p>SSURGO soil data (full horizon tables and summarized field-level properties) is available in the pipeline for each field and could be incorporated in future work if needed.</p>
+</div>
+
+<footer>
+  Generated by <code>eda_field_level.py</code> &mdash; 10 static outputs across 3 categories + geospatial map
+</footer>
+
+</div>
+</body>
+</html>
