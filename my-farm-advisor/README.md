@@ -244,6 +244,42 @@ The umbrella entrypoint is [`SKILL.md`](SKILL.md). From there, the skill routes 
 | Strategy         | Crop strategy and maturity planning workflows                          | [`strategy/INDEX.md`](strategy/INDEX.md)                 |
 | Weather          | NASA POWER weather ingestion and downstream weather analysis           | [`weather/INDEX.md`](weather/INDEX.md)                   |
 
+### Field-Season Dashboard
+
+**Workflow:** [`eda-field-season-dashboard`](eda/eda-field-season-dashboard/)
+
+Generates a single aligned 5-panel dashboard (NDVI, precipitation, temperature/extremes, cumulative GDD, crop-stage bar) for one field in one growing season.
+
+**Input files (under data-pipeline runtime):**
+- `fields/<field>/boundary/field_boundary.geojson` — field polygon for NDVI zonal masking
+- `fields/<field>/satellite/sentinel/<year>/<scene>/<scene>_ndvi.tif` — Sentinel-2 NDVI rasters (zonal mean ± IQR per scene)
+- `farms/<farm>/derived/tables/<farm>_weather_2021_2025.csv` — daily T2M_MAX, T2M_MIN, PRECTOTCORR
+- `farms/<farm>/derived/tables/<farm>_cdl_2021_2025_full_composition.csv` — CDL crop per field-year
+
+**Weather metrics:** Daily precipitation (mm), Tmax/Tmin (°C), GDD (base 10°C = max(0, (Tmax+Tmin)/2 − 10)), cumulative precipitation and GDD.
+
+**Output:** `eda/field-season-dashboard/output/<field>_<year>_dashboard.png` (relative to data-pipeline root)
+
+**Prototype:** Nebraska field `osm-1352429400` (Buffalo County), year **2021, Corn** (95.5% of field). All 5 years (2021–2025) are generated to show contrast across corn, soybean, and winter wheat rotations.
+
+**Rerun:**
+```bash
+export DATA_PIPELINE_DATA_ROOT=/path/to/runtime
+"${DATA_PIPELINE_DATA_ROOT}/data-pipeline/.venv/bin/python" \
+  scripts/eda/eda_field_season_dashboard.py \
+  --grower-slug nebraska-grower \
+  --farm-slug nebraska-grower-nebraska \
+  --field-slug osm-1352429400 \
+  --year 2021
+```
+
+**Known limitations:**
+- NDVI: winter months (Jan, Feb, Dec) typically have no coverage at this latitude due to cloud cover and low illumination; the data quality report prints notes for any missing months or scene gaps >60 days.
+- Weather: NASA POWER at ~0.5&deg; grid resolution — represents the general area, not microclimatic field variation.
+- GDD: single base temperature (10&deg;C), standard for corn but approximate for soybeans and winter wheat.
+
+See [`eda/eda-field-season-dashboard/GUIDE.md`](eda/eda-field-season-dashboard/GUIDE.md) for the full workflow.
+
 ## Typical Workflow
 
 ```mermaid

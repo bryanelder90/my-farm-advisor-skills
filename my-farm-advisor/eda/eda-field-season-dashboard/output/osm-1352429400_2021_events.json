@@ -1,0 +1,297 @@
+{
+  "field": "osm-1352429400",
+  "year": 2021,
+  "crop": "Corn",
+  "ndvi_peak": 0.892,
+  "ndvi_peak_date": "2021-08-08",
+  "total_precip_mm": 675.5,
+  "total_gdd_cday": 2125.1,
+  "temp_min_c": -25.7,
+  "temp_max_c": 40.2,
+  "ndvi_event_count": 2,
+  "weather_event_count": 52,
+  "events": {
+    "ndvi": [
+      {
+        "type": "greenup",
+        "date": "2021-06-16 00:00:00",
+        "value": 0.43230706453323364,
+        "prev_date": "2021-05-05 00:00:00"
+      },
+      {
+        "type": "dip",
+        "date": "2021-09-27 00:00:00",
+        "value": -0.6338318884372711,
+        "prev_date": "2021-08-08 00:00:00"
+      }
+    ],
+    "weather": [
+      {
+        "type": "heavy_rain",
+        "date": "2021-03-13 00:00:00",
+        "value": 33.25
+      },
+      {
+        "type": "heavy_rain",
+        "date": "2021-03-14 00:00:00",
+        "value": 58.099976
+      },
+      {
+        "type": "heavy_rain",
+        "date": "2021-03-22 00:00:00",
+        "value": 32.48999
+      },
+      {
+        "type": "heavy_rain",
+        "date": "2021-05-02 00:00:00",
+        "value": 22.51001
+      },
+      {
+        "type": "heavy_rain",
+        "date": "2021-05-26 00:00:00",
+        "value": 31.01001
+      },
+      {
+        "type": "heavy_rain",
+        "date": "2021-09-02 00:00:00",
+        "value": 25.78003
+      },
+      {
+        "type": "extreme_heat",
+        "date": "2021-06-16 00:00:00",
+        "value": 38.609985
+      },
+      {
+        "type": "extreme_heat",
+        "date": "2021-06-17 00:00:00",
+        "value": 40.200012
+      },
+      {
+        "type": "extreme_heat",
+        "date": "2021-08-09 00:00:00",
+        "value": 39.049988
+      },
+      {
+        "type": "late_freeze",
+        "date": "2021-11-01 00:00:00",
+        "value": -0.099975586
+      },
+      {
+        "type": "late_freeze",
+        "date": "2021-11-02 00:00:00",
+        "value": -1.3300171
+      },
+      {
+        "type": "late_freeze",
+        "date": "2021-11-12 00:00:00",
+        "value": -4.340027
+      },
+      {
+        "type": "late_freeze",
+        "date": "2021-11-13 00:00:00",
+        "value": -4.25
+      },
+      {
+        "type": "late_freeze",
+        "date": "2021-11-17 00:00:00",
+        "value": -3.1099854
+      },
+      {
+        "type": "late_freeze",
+        "date": "2021-11-18 00:00:00",
+        "value": -5.3599854
+      },
+      {
+        "type": "late_freeze",
+        "date": "2021-11-19 00:00:00",
+        "value": -0.5300293
+      },
+      {
+        "type": "late_freeze",
+        "date": "2021-11-21 00:00:00",
+        "value": -1.6799927
+      },
+      {
+        "type": "late_freeze",
+        "date": "2021-11-22 00:00:00",
+        "value": -3.0499878
+      },
+      {
+        "type": "late_freeze",
+        "date": "2021-11-24 00:00:00",
+        "value": -1.1500244
+      },
+      {
+        "type": "late_freeze",
+        "date": "2021-11-25 00:00:00",
+        "value": -6.1500244
+      },
+      {
+        "type": "late_freeze",
+        "date": "2021-11-26 00:00:00",
+        "value": -0.51000977
+      },
+      {
+        "type": "late_freeze",
+        "date": "2021-11-28 00:00:00",
+        "value": -0.5800171
+      },
+      {
+        "type": "late_freeze",
+        "date": "2021-12-04 00:00:00",
+        "value": -1.9500122
+      },
+      {
+        "type": "late_freeze",
+        "date": "2021-12-05 00:00:00",
+        "value": -2.6799927
+      },
+      {
+        "type": "late_freeze",
+        "date": "2021-12-06 00:00:00",
+        "value": -5.8599854
+      },
+      {
+        "type": "late_freeze",
+        "date": "2021-12-07 00:00:00",
+        "value": -3.7999878
+      },
+      {
+        "type": "late_freeze",
+        "date": "2021-12-08 00:00:00",
+        "value": -3.2999878
+      },
+      {
+        "type": "late_freeze",
+        "date": "2021-12-10 00:00:00",
+        "value": -2.669983
+      },
+      {
+        "type": "late_freeze",
+        "date": "2021-12-11 00:00:00",
+        "value": -5.8099976
+      },
+      {
+        "type": "late_freeze",
+        "date": "2021-12-12 00:00:00",
+        "value": -3.6599731
+      },
+      {
+        "type": "late_freeze",
+        "date": "2021-12-13 00:00:00",
+        "value": -1.5200195
+      },
+      {
+        "type": "late_freeze",
+        "date": "2021-12-15 00:00:00",
+        "value": -0.8800049
+      },
+      {
+        "type": "late_freeze",
+        "date": "2021-12-16 00:00:00",
+        "value": -4.580017
+      },
+      {
+        "type": "late_freeze",
+        "date": "2021-12-17 00:00:00",
+        "value": -5.590027
+      },
+      {
+        "type": "late_freeze",
+        "date": "2021-12-18 00:00:00",
+        "value": -8.700012
+      },
+      {
+        "type": "late_freeze",
+        "date": "2021-12-19 00:00:00",
+        "value": -5.9699707
+      },
+      {
+        "type": "late_freeze",
+        "date": "2021-12-20 00:00:00",
+        "value": -4.3099976
+      },
+      {
+        "type": "late_freeze",
+        "date": "2021-12-21 00:00:00",
+        "value": -4.48999
+      },
+      {
+        "type": "late_freeze",
+        "date": "2021-12-22 00:00:00",
+        "value": -1.4299927
+      },
+      {
+        "type": "late_freeze",
+        "date": "2021-12-24 00:00:00",
+        "value": -0.7199707
+      },
+      {
+        "type": "late_freeze",
+        "date": "2021-12-25 00:00:00",
+        "value": -3.630005
+      },
+      {
+        "type": "late_freeze",
+        "date": "2021-12-26 00:00:00",
+        "value": -3.4899902
+      },
+      {
+        "type": "late_freeze",
+        "date": "2021-12-27 00:00:00",
+        "value": -3.6099854
+      },
+      {
+        "type": "late_freeze",
+        "date": "2021-12-28 00:00:00",
+        "value": -6.409973
+      },
+      {
+        "type": "late_freeze",
+        "date": "2021-12-29 00:00:00",
+        "value": -7.2700195
+      },
+      {
+        "type": "late_freeze",
+        "date": "2021-12-30 00:00:00",
+        "value": -6.0999756
+      },
+      {
+        "type": "late_freeze",
+        "date": "2021-12-31 00:00:00",
+        "value": -12.309998
+      },
+      {
+        "type": "dry_spell",
+        "date": "2021-01-01 00:00:00",
+        "value": 24
+      },
+      {
+        "type": "dry_spell",
+        "date": "2021-02-15 00:00:00",
+        "value": 26
+      },
+      {
+        "type": "dry_spell",
+        "date": "2021-05-31 00:00:00",
+        "value": 19
+      },
+      {
+        "type": "dry_spell",
+        "date": "2021-11-11 00:00:00",
+        "value": 29
+      },
+      {
+        "type": "dry_spell",
+        "date": "2021-12-16 00:00:00",
+        "value": 16
+      }
+    ]
+  },
+  "drought_context": {
+    "year_total_mm": 675.5,
+    "five_year_mean_mm": 564.8,
+    "anomaly_mm": 110.7,
+    "anomaly_pct": 19.6
+  }
+}
